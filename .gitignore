@@ -14,3 +14,6 @@ reports/
 
 # Keep the supplied example env file tracked even though .env is ignored.
 !.env.example
+
+# Local-only training practice files (curl configs, scratch notes).
+.training/

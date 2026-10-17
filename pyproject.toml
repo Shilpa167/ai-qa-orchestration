@@ -17,6 +17,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0,<9.0",
+    # Lets jsonschema's FormatChecker actually check "format": "date-time".
+    # Without it, date-time formats are silently skipped.
+    "rfc3339-validator>=0.1.4,<1.0",
 ]
 
 [tool.setuptools.packages.find]

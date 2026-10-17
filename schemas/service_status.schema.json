@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ServiceStatus",
+  "description": "The VPN status returned by GET /services/vpn/status (BR04).",
+  "type": "object",
+  "required": ["service", "status", "updated_at", "message"],
+  "additionalProperties": false,
+  "properties": {
+    "service": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["operational", "degraded", "outage"]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "message": {
+      "type": "string"
+    }
+  }
+}

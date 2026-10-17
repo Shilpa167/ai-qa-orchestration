@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Employee",
+  "description": "The synthetic employee returned by GET /employees/me.",
+  "type": "object",
+  "required": ["employee_id", "full_name", "department", "email"],
+  "additionalProperties": false,
+  "properties": {
+    "employee_id": {
+      "type": "string",
+      "pattern": "^EMP[0-9]+$"
+    },
+    "full_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "department": {
+      "type": "string",
+      "minLength": 1
+    },
+    "email": {
+      "type": "string",
+      "minLength": 3
+    }
+  }
+}

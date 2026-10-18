@@ -17,3 +17,14 @@ reports/
 
 # Local-only training practice files (curl configs, scratch notes).
 .training/
+
+# Day 3: credentials and local caches. Appended, existing rules unchanged.
+# Any .env variant (.env.local, .env.live, ...) stays local; the example
+# file is re-included below so it remains tracked.
+.env.*
+!.env.example
+*.pem
+*.key
+.mypy_cache/
+.ruff_cache/
+env/

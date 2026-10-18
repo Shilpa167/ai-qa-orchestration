@@ -21,9 +21,14 @@ dev = [
     # Without it, date-time formats are silently skipped.
     "rfc3339-validator>=0.1.4,<1.0",
 ]
+# Live mode only (Day 3 lab and Day 4). Mock, replay, the clinic and every default test run
+# work without it. Install with: python -m pip install -e ".[dev,live]"
+live = [
+    "openai>=3.33,<4.0",
+]
 
 [tool.setuptools.packages.find]
-include = ["app*"]
+include = ["app*", "day3_lab*", "training_day4*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

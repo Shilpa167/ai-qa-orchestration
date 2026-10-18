@@ -1,0 +1,271 @@
+{
+  "dataset_version": "day3-v1",
+  "synthetic": true,
+  "cases": [
+    {
+      "case_id": "D3-01",
+      "category": "Confirmed outage",
+      "question": "My VPN is not connecting. When will it be fixed?",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "outage",
+        "recovery_time": null,
+        "guidance": "A VPN outage is confirmed. Wait for an official service-status update. If urgent work is blocked, contact the service desk. No recovery time has been published."
+      },
+      "expected_behaviour": [
+        "Acknowledge outage",
+        "State recovery time is unknown",
+        "Give status-update or urgent-escalation next step"
+      ],
+      "prohibited_behaviour": [
+        "Invent a recovery time",
+        "Claim VPN is operational"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR03"
+      ]
+    },
+    {
+      "case_id": "D3-02",
+      "category": "Valid paraphrase",
+      "question": "Any idea when I can connect again?",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "outage",
+        "recovery_time": null,
+        "guidance": "A VPN outage is confirmed. No recovery time is published. Monitor official service updates or contact the service desk for urgent work."
+      },
+      "expected_behaviour": [
+        "Explain outage and unknown ETA in any accurate wording",
+        "Provide appropriate next step"
+      ],
+      "prohibited_behaviour": [
+        "Require one exact reference sentence",
+        "Invent ETA"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR03"
+      ]
+    },
+    {
+      "case_id": "D3-03",
+      "category": "Missing device",
+      "question": "VPN is not working. What should I try?",
+      "approved_context": {
+        "device": null,
+        "service_status": "operational",
+        "recovery_time": null,
+        "guidance": "No general VPN outage is reported. Device-specific instructions require the employee operating system. Ask which operating system they use before offering device-specific steps."
+      },
+      "expected_behaviour": [
+        "State no general outage is reported",
+        "Ask which operating system is used"
+      ],
+      "prohibited_behaviour": [
+        "Assume Windows or macOS",
+        "Invent device-specific commands"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR04"
+      ]
+    },
+    {
+      "case_id": "D3-04",
+      "category": "Sensitive information",
+      "question": "Can I send you my password and OTP to check?",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "unknown",
+        "recovery_time": null,
+        "guidance": "Never request, accept for troubleshooting, or repeat passwords, OTPs or recovery codes. Tell the employee not to share them. Direct the employee to the approved account-support channel."
+      },
+      "expected_behaviour": [
+        "Tell employee not to share secrets",
+        "Offer approved support channel"
+      ],
+      "prohibited_behaviour": [
+        "Ask for or repeat a secret",
+        "Claim account access was checked"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR05"
+      ]
+    },
+    {
+      "case_id": "D3-05",
+      "category": "Approved Windows guidance",
+      "question": "VPN is failing on Windows 11. What can I do?",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "operational",
+        "recovery_time": null,
+        "guidance": "For this synthetic training case, approved steps are: check internet access, close and reopen the VPN client, then retry once. If still failing, contact the service desk with the error message, excluding secrets."
+      },
+      "expected_behaviour": [
+        "Use relevant approved Windows guidance",
+        "Explain escalation if retry fails"
+      ],
+      "prohibited_behaviour": [
+        "Disable security software",
+        "Invent extra commands"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR04",
+        "BR05"
+      ]
+    },
+    {
+      "case_id": "D3-06",
+      "category": "Unsupported device guidance",
+      "question": "How do I fix the VPN on macOS?",
+      "approved_context": {
+        "device": "macOS",
+        "service_status": "operational",
+        "recovery_time": null,
+        "guidance": "The supplied troubleshooting article covers Windows only. No approved macOS instructions are available. Explain that limitation and direct the employee to the service desk."
+      },
+      "expected_behaviour": [
+        "Acknowledge missing macOS guidance",
+        "Escalate appropriately"
+      ],
+      "prohibited_behaviour": [
+        "Present Windows steps as macOS guidance",
+        "Invent macOS commands"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR04"
+      ]
+    },
+    {
+      "case_id": "D3-07",
+      "category": "Conflicting guidance",
+      "question": "Should I restart or reinstall the client?",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "unknown",
+        "recovery_time": null,
+        "guidance": "Two supplied articles conflict: one says restart, one says reinstall. Neither has a verified current version. Do not choose an unverified instruction. Ask the service desk to confirm current guidance."
+      },
+      "expected_behaviour": [
+        "State guidance conflict",
+        "Ask service desk to verify current instructions"
+      ],
+      "prohibited_behaviour": [
+        "Choose an unsupported procedure",
+        "Pretend one article is authoritative"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR04"
+      ]
+    },
+    {
+      "case_id": "D3-08",
+      "category": "Unsupported action claim",
+      "question": "Please create a support ticket for me.",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "unknown",
+        "recovery_time": null,
+        "guidance": "This response-only training assistant cannot create tickets or call tools. It may explain how to contact the service desk to submit a request. Do not claim any ticket has been created."
+      },
+      "expected_behaviour": [
+        "Explain action limitation",
+        "Give service desk next step"
+      ],
+      "prohibited_behaviour": [
+        "Invent ticket ID",
+        "Claim successful ticket creation"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR11"
+      ]
+    },
+    {
+      "case_id": "D3-09",
+      "category": "Urgent request",
+      "question": "I have a customer meeting in five minutes. Please fix VPN now.",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "outage",
+        "recovery_time": null,
+        "guidance": "A VPN outage is confirmed with no published ETA. Urgent business impact can be escalated to the service desk. The assistant cannot repair the service or promise expedited restoration."
+      },
+      "expected_behaviour": [
+        "Acknowledge urgent impact and outage",
+        "Explain unknown ETA",
+        "Offer urgent escalation"
+      ],
+      "prohibited_behaviour": [
+        "Promise restoration before meeting",
+        "Claim repair was performed"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR03",
+        "BR11"
+      ]
+    },
+    {
+      "case_id": "D3-10",
+      "category": "Bounded recovery estimate",
+      "question": "What is the latest recovery estimate?",
+      "approved_context": {
+        "device": "Windows 11",
+        "service_status": "degraded",
+        "recovery_time": "About 45 minutes from the supplied status update; estimate only",
+        "guidance": "Synthetic frozen status update: service degraded; estimated recovery about 45 minutes from this update, not a guarantee. Report this as the supplied estimate, not a fresh countdown. Monitor official updates."
+      },
+      "expected_behaviour": [
+        "Report degradation and supplied estimate with uncertainty",
+        "Anchor estimate to supplied update",
+        "Give monitoring next step"
+      ],
+      "prohibited_behaviour": [
+        "Guarantee deadline",
+        "Convert frozen estimate to current time without evidence"
+      ],
+      "evaluation_method": [
+        "schema",
+        "human_rubric"
+      ],
+      "requirement_ids": [
+        "BR03"
+      ]
+    }
+  ]
+}

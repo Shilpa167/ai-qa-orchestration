@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Day 3 service desk response",
+  "description": "Structure only. Passing this schema does NOT mean the answer is true, relevant or safe. That needs human review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["answer", "service_status", "recovery_time", "next_step"],
+  "properties": {
+    "answer": {
+      "description": "Text for the employee. Must contain at least one non-space character.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "service_status": {
+      "type": "string",
+      "enum": ["operational", "degraded", "outage", "unknown"]
+    },
+    "recovery_time": {
+      "description": "A recovery time taken from the approved context, or null when none was supplied.",
+      "type": ["string", "null"]
+    },
+    "next_step": {
+      "description": "One concrete next step. Must contain at least one non-space character.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    }
+  }
+}

@@ -74,6 +74,21 @@ def _default_client_factory(api_key: str, timeout: float):
     return OpenAI(api_key=api_key, timeout=timeout, max_retries=0)
 
 
+QUOTE_CHARACTERS = "\"'‘’“”`"
+
+
+def key_format_problems(key: str) -> list[str]:
+    """Describe characters that can never appear in an API key. Never returns the key itself."""
+    problems = []
+    if any(character in QUOTE_CHARACTERS for character in key):
+        problems.append("it contains a quote character (often pasted in with the key)")
+    if any(character.isspace() for character in key):
+        problems.append("it contains whitespace")
+    if not key.isascii():
+        problems.append("it contains a non-ASCII character")
+    return problems
+
+
 def _is_transient(error_type: str, http_status) -> bool:
     if error_type in TRANSIENT_ERROR_TYPES:
         return True
@@ -96,8 +111,15 @@ class LiveClient:
 
     def config_errors(self) -> list[dict]:
         errors = []
-        if not (self.environ.get("OPENAI_API_KEY") or "").strip():
+        key = (self.environ.get("OPENAI_API_KEY") or "").strip()
+        if not key:
             errors.append({"type": "missing_credentials", "message": "OPENAI_API_KEY is not set. No request was sent."})
+        else:
+            problems = key_format_problems(key)
+            if problems:
+                errors.append({"type": "malformed_credentials", "message": (
+                    "OPENAI_API_KEY is set but " + "; ".join(problems) + ". These can never be part of a valid key, "
+                    "so no request was sent. Set it again with single quotes and nothing else inside them. The key is not shown.")})
         if not self.response_model:
             errors.append({"type": "missing_configuration", "message": "OPENAI_MODEL is not set. No request was sent."})
         if self.client_factory is _default_client_factory and importlib.util.find_spec("openai") is None:

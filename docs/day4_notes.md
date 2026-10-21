@@ -131,6 +131,7 @@ the command could not run.
   SDK's own retries are turned off so every attempt is counted.
 - Malformed output and low scores are **never** retried.
 - A live failure is recorded as an error and **never** switches to replay.
+- Before any request, an `OPENAI_API_KEY` containing a quote character, whitespace or a non-ASCII character is rejected locally as `malformed_credentials` (the key is never shown). Such characters cannot be part of a valid key. A key that passes this check can still be rejected by the API (HTTP 401): the check cannot tell a wrong, revoked or wrong-project key from a good one.
 - The response generator receives only the prompt, the employee request
   and the approved context. The judge receives only an opaque response ID,
   the request, the context, the candidate response and the general rubric.
@@ -245,9 +246,9 @@ anyway. **Never force-add the whole `reports/` folder.**
 ## 12. Tests (actual results, 2026-10-18, Python 3.12.10, offline)
 
 ```
-python -m pytest -v                       226 passed  (7 Day 1 + 24 Day 2 + 130 Day 3 + 65 Day 4)
-python -m pytest -v tests/day4            65 passed
-python -m training_day4 validate          VALID; 8 proposed (unconfirmed), 0 confirmed
+python -m pytest -v                       233 passed  (7 Day 1 + 24 Day 2 + 130 Day 3 + 72 Day 4)
+python -m pytest -v tests/day4            72 passed
+python -m training_day4 validate          VALID (8 proposed; confirmed count depends on the reviews you have recorded)
 python -m day3_lab validate-data          Cases validated: 10
 ```
 
@@ -255,14 +256,14 @@ python -m day3_lab validate-data          Cases validated: 10
 | --- | --- | --- |
 | `test_day4_data.py` | 7 | supplied cases preserved, references defined, proposed labels never treated as confirmed |
 | `test_day4_judge.py` | 24 | judge and generator inputs exclude labels/answer keys/prompt labels, invalid judge output is an error, critical violations override perfect scores, PASS rule |
-| `test_day4_live.py` | 13 | missing credentials never fall back to replay, bounded retries for transient errors only, no retry on low scores or malformed output, judge-model configuration, access check, network guard |
+| `test_day4_live.py` | 20 | missing credentials never fall back to replay, bounded retries for transient errors only, no retry on low scores or malformed output, judge-model configuration, access check, network guard, malformed API key caught before any request |
 | `test_day4_runs.py` | 10 | no overwrites, repeat keeps every result and error, strict `latest-fixed`, calibration with 0 confirmed labels and missing results, summary |
 | `test_day4_reviews.py` | 11 | explicit named reviews, proposal untouched, stale detection (response, rubric), generated reviews bound to run and response, judge never creates reviews |
 
 Offline protection is in `tests/day4/conftest.py`:
 - It clears `OPENAI_API_KEY`, `OPENAI_MODEL` and `OPENAI_JUDGE_MODEL`.
 - It blocks every non-loopback connection and DNS lookup.
-- It redirects reports and confirmed reviews to temporary copies.
+- It redirects reports to a temporary folder and starts every test from an **empty** confirmed-reviews file, so reviews you record never change test results and tests never modify them.
 - Live behaviour is tested only with a fake SDK client.
 - Day 3's protection is unchanged.
 

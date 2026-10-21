@@ -7,11 +7,14 @@ folders), so Day 4 defines its own. Every Day 4 test:
 - runs with OPENAI_API_KEY, OPENAI_MODEL and OPENAI_JUDGE_MODEL removed;
 - cannot open a network connection: anything other than a loopback
   address raises, so a mistaken live call fails loudly instead of billing;
-- writes reports and confirmed reviews to temporary copies, never to
-  reports/day4/ or datasets/day4/confirmed_reviews.json.
+- writes reports to a temporary folder and starts every test from an EMPTY
+  confirmed-reviews file, so a trainer's real reviews in
+  datasets/day4/confirmed_reviews.json never change test outcomes and are
+  never modified by tests.
 """
 
 import ipaddress
+import json
 import shutil
 import socket
 
@@ -58,10 +61,15 @@ def offline(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def isolated_outputs(monkeypatch, tmp_path):
-    """Point reports and confirmed reviews at temporary copies for every test."""
+    """Point reports and confirmed reviews at temporary files for every test.
+
+    The confirmed-reviews file starts empty (same format as the real one),
+    not as a copy: real reviews entered by a trainer must not leak in.
+    """
     reports = tmp_path / "reports" / "day4"
     confirmed = tmp_path / "confirmed_reviews.json"
-    shutil.copyfile(data.CONFIRMED_REVIEWS_PATH, confirmed)
+    real = json.loads(data.CONFIRMED_REVIEWS_PATH.read_text(encoding="utf-8"))
+    confirmed.write_text(json.dumps({"format": real["format"], "notice": real["notice"], "reviews": []}), encoding="utf-8")
     monkeypatch.setattr(data, "REPORTS_DIR", reports)
     monkeypatch.setattr(data, "CONFIRMED_REVIEWS_PATH", confirmed)
     return reports

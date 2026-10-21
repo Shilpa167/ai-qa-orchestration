@@ -154,3 +154,42 @@ def test_offline_guard_blocks_real_network_connections():
     # Match the message rather than importing conftest (importing it would load a second copy).
     with pytest.raises(RuntimeError, match="Day 4 tests are offline"):
         socket.create_connection(("api.openai.com", 443), timeout=1)
+
+
+@pytest.mark.parametrize(
+    "key, expected",
+    [
+        ("sk-test-not-a-real-key-123456'", "quote character"),
+        ('"sk-test-not-a-real-key-123456"', "quote character"),
+        ("sk-test-not-a-real-key-123456”", "quote character"),
+        ("sk-test-not a-real-key", "whitespace"),
+        ("sk-test-not-a-real-key-123456é", "non-ASCII"),
+    ],
+)
+def test_malformed_key_is_caught_locally_before_any_request(key, expected):
+    sdk = FakeSDK(lambda kwargs, n: sdk_response("OK"))
+    env = {**LIVE_ENV, "OPENAI_API_KEY": key}
+
+    run, run_dir = experiments.run_compare("live", ["D4-01"], seed=1, environ=env, client_factory=factory_for(sdk), sleep=lambda s: None)
+
+    assert sdk.calls == []
+    assert [error["type"] for error in run["run_errors"]] == ["malformed_credentials"]
+    assert expected in run["run_errors"][0]["message"]
+    assert run["observations"] == []
+    for name in ("run.json", "results.md"):
+        assert key.strip("\"'”") not in (run_dir / name).read_text(encoding="utf-8")
+
+
+def test_access_check_also_rejects_a_malformed_key_without_calling_the_api():
+    sdk = FakeSDK(lambda kwargs, n: sdk_response("OK"))
+    env = {**LIVE_ENV, "OPENAI_API_KEY": "sk-test-not-a-real-key-123456'"}
+
+    run, _ = experiments.run_access_check(environ=env, client_factory=factory_for(sdk), sleep=lambda s: None)
+
+    assert sdk.calls == [] and run["status"] == "failed"
+    assert run["run_errors"][0]["type"] == "malformed_credentials"
+
+
+def test_a_well_formed_key_is_not_flagged():
+    assert clients.key_format_problems(LIVE_ENV["OPENAI_API_KEY"]) == []
+    assert clients.key_format_problems("sk-proj-Ab12_cd-34") == []
